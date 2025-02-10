@@ -10,7 +10,7 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // show welcome page 3 mins and redirect to ProjectList page
+    // show welcome page 3 sec and redirect to ProjectList page
     return FutureBuilder(
         future: Future.delayed(Duration(seconds: 3)),
         builder: (context, promise) {

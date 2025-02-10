@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:project_manager/components/ProjectItem.dart';
+import 'package:project_manager/models/ProjectModel.dart';
 
 void main(List<String> args) {
   runApp(ProjectList());
 }
 
 class ProjectList extends StatelessWidget {
-  final List<String> projectList = ['Project 1', 'Project 2', 'Project 3'];
+
+  final projects = List<Project>.generate(
+      5,
+      (index) => Project(
+          projectName: 'Project lalalalal $index',
+          startDate: DateTime.now(),
+          endDate: DateTime.now(),
+          tasks: []));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Project List',
+            'Projects',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
           actions: [
@@ -25,14 +34,9 @@ class ProjectList extends StatelessWidget {
           ],
         ),
         body: ListView.builder(
-            itemCount: projectList.length,
+            itemCount: projects.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(projectList[index]),
-                onTap: () {
-                  // jump to projectDetail page, undone
-                },
-              );
+              return ProjectItem(project: projects[index]);
             }));
   }
 }
