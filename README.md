@@ -1,16 +1,8 @@
-# project_manager
+# TaskSpark
 
-A new Flutter project.
+A Flutter project for group assignment #1
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To see the related information about this project, please visit:
+https://fork-parka-ac5.notion.site/Group-Project-1891f5bec34280c68715d0d6681e66dc?pvs=4
