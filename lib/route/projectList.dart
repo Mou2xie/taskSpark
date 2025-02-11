@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_manager/components/ProjectItem.dart';
 import 'package:project_manager/models/ProjectModel.dart';
+import 'createProject.dart';
 
 void main(List<String> args) {
   runApp(ProjectList());
@@ -28,7 +29,7 @@ class ProjectList extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.add, size: 40),
               onPressed: () {
-                // jump to create peorject page, undone
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>CreateProject()));
               },
             ),
           ],
