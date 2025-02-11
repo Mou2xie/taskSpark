@@ -10,7 +10,7 @@ void main(List<String> args) {
 class ProjectList extends StatelessWidget {
 
   final projects = List<Project>.generate(
-      5,
+      3,
       (index) => Project(
           projectName: 'Project lalalalal $index',
           startDate: DateTime.now(),
