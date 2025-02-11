@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_manager/models/ProjectModel.dart';
+import 'package:project_manager/route/projectDetail.dart';
 
 class ProjectItem extends StatelessWidget {
   final Project project;
@@ -10,7 +11,8 @@ class ProjectItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          // jump to project detail page, undone
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ProjectDetail()));
         },
         child: Container(
           decoration: BoxDecoration(

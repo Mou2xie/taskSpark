@@ -74,7 +74,7 @@ class _FormWidgetState extends State {
               border: Border.all(color: Color(0xffCFCFCF)),
               borderRadius: BorderRadius.circular(5),
             ),
-            padding: EdgeInsets.all(5),
+            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 1),
             child: Row(
               children: [
                 Icon(
