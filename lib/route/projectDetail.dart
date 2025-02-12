@@ -48,12 +48,13 @@ class TopCard extends StatelessWidget{
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.calendar_today),
+              Icon(Icons.calendar_today, size: 20),
+              SizedBox(width: 5),
               Text('1.22 - 2.22',style: TextStyle(fontSize: 18),),
             ],
           ),
           // prople list undone
-          Text('This is a project description', style: TextStyle(fontSize: 14)),
+          Text('This is a project description', style: TextStyle(fontSize: 16)),
         ],
       ),
     );

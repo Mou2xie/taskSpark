@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "../models/Member.dart";
 
 void main() {
   runApp(CreateProject());
@@ -33,6 +34,13 @@ class _FormWidgetState extends State {
 
   DateTimeRange _selectedRange = DateTimeRange(
       start: DateTime.now(), end: DateTime.now().add(Duration(days: 1)));
+
+  final Map<Member, bool> _checkboxes = {
+    Member.xie: false,
+    Member.sam: false,
+    Member.shamshad: false,
+    Member.isha: false,
+  };
 
   Future<void> _selectDateRange(BuildContext context) async {
     DateTimeRange? picked = await showDateRangePicker(
@@ -74,7 +82,7 @@ class _FormWidgetState extends State {
               border: Border.all(color: Color(0xffCFCFCF)),
               borderRadius: BorderRadius.circular(5),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 1),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
             child: Row(
               children: [
                 Icon(
@@ -84,12 +92,12 @@ class _FormWidgetState extends State {
                 SizedBox(width: 2),
                 Text(
                   "Duration:",
-                  style: TextStyle(fontSize: 22),
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
                 ),
                 SizedBox(width: 10),
                 Text(
                   "${_selectedRange!.start.month}.${_selectedRange!.start.day} - ${_selectedRange!.end.month}.${_selectedRange!.end.day}",
-                  style: TextStyle(fontSize: 22),
+                  style: TextStyle(fontSize: 20),
                 ),
                 Spacer(),
                 IconButton(
@@ -104,9 +112,10 @@ class _FormWidgetState extends State {
           const SizedBox(height: 20),
           Align(
             alignment: Alignment.centerLeft,
-            child: Text("Project Description", style: TextStyle(fontSize: 22)),
+            child: Text("Project Description",
+                style: TextStyle(fontSize: 18, color: Colors.grey)),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 5),
           TextFormField(
             maxLines: 4,
             decoration: InputDecoration(
@@ -114,8 +123,33 @@ class _FormWidgetState extends State {
             ),
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(minimumSize: Size(250, 46)),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Team Members",
+                style: TextStyle(fontSize: 18, color: Colors.grey)),
+          ),
+          SizedBox(height: 5),
+          ListView(
+            shrinkWrap: true,
+            children: _checkboxes.keys
+                .map((Member member) => CheckboxListTile(
+                      value: _checkboxes[member],
+                      title: Text(member.name, style: TextStyle(fontSize: 18)),
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _checkboxes[member] = value!;
+                        });
+                      },
+                    ))
+                .toList(),
+          ),
+          const SizedBox(height: 50),
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              minimumSize: Size(300, 46),
+              side: BorderSide(color: Colors.blue, width: 2),
+              foregroundColor: Colors.blue,
+            ),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -123,7 +157,10 @@ class _FormWidgetState extends State {
                 );
               }
             },
-            child: const Text('Create'),
+            child: const Text(
+              'Create',
+              style: TextStyle(fontSize: 18),
+            ),
           )
         ],
       ),
