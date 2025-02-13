@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/ProjectModel.dart';
 import "../models/Member.dart";
+import '../providers/projectsListProvider.dart';
 
 void main() {
   runApp(CreateProject());
@@ -32,39 +35,60 @@ class FormWidget extends StatefulWidget {
 class _FormWidgetState extends State {
   final _formKey = GlobalKey<FormState>();
 
-  DateTimeRange _selectedRange = DateTimeRange(
+  // access projectName with projectNameController.text
+  final projectNameController = TextEditingController();
+  // access projectDescription with projectDescriptionController.text
+  final projectDescriptionController = TextEditingController();
+
+  @override
+  void dispose() {
+    //clean controllers when the widget is removed
+    projectNameController.dispose();
+    projectDescriptionController.dispose();
+    super.dispose();
+  }
+
+  // durationRange selected by user
+  DateTimeRange durationRange = DateTimeRange(
       start: DateTime.now(), end: DateTime.now().add(Duration(days: 1)));
 
-  final Map<Member, bool> _checkboxes = {
+  // the member and whether they are enrolled in the project
+  Map<Member, bool> enrollMember = {
     Member.xie: false,
     Member.sam: false,
     Member.shamshad: false,
     Member.isha: false,
   };
 
-  Future<void> _selectDateRange(BuildContext context) async {
+  // get duration range from user and set durationRange state
+  Future<void> selectDurationRange(BuildContext context) async {
     DateTimeRange? picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      initialDateRange: _selectedRange,
+      initialDateRange: durationRange,
       saveText: "Comfirm",
     );
 
     if (picked != null) {
       setState(() {
-        _selectedRange = picked;
+        durationRange = picked;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final projectsListProvider = Provider.of<ProjectsListProvider>(context,listen: false);
+
     return Form(
       key: _formKey,
       child: Column(
         children: [
+          // project name input box
           TextFormField(
+            controller: projectNameController,
             decoration: InputDecoration(
               labelText: 'Project Name',
               border: OutlineInputBorder(),
@@ -76,7 +100,10 @@ class _FormWidgetState extends State {
               return null;
             },
           ),
+
           SizedBox(height: 20),
+
+          // duration range input box
           Container(
             decoration: BoxDecoration(
               border: Border.all(color: Color(0xffCFCFCF)),
@@ -96,12 +123,12 @@ class _FormWidgetState extends State {
                 ),
                 SizedBox(width: 10),
                 Text(
-                  "${_selectedRange!.start.month}.${_selectedRange!.start.day} - ${_selectedRange!.end.month}.${_selectedRange!.end.day}",
+                  "${durationRange!.start.month}.${durationRange!.start.day} - ${durationRange!.end.month}.${durationRange!.end.day}",
                   style: TextStyle(fontSize: 20),
                 ),
                 Spacer(),
                 IconButton(
-                    onPressed: () => _selectDateRange(context),
+                    onPressed: () => selectDurationRange(context),
                     icon: Icon(
                       Icons.date_range,
                       size: 35,
@@ -109,15 +136,20 @@ class _FormWidgetState extends State {
               ],
             ),
           ),
+
           const SizedBox(height: 20),
+
           Align(
             alignment: Alignment.centerLeft,
             child: Text("Project Description",
                 style: TextStyle(fontSize: 18, color: Colors.grey)),
           ),
           SizedBox(height: 5),
+
+          // project description input box
           TextFormField(
             maxLines: 4,
+            controller: projectDescriptionController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
             ),
@@ -129,21 +161,26 @@ class _FormWidgetState extends State {
                 style: TextStyle(fontSize: 18, color: Colors.grey)),
           ),
           SizedBox(height: 5),
+
+          // team members checkbox
           ListView(
             shrinkWrap: true,
-            children: _checkboxes.keys
+            children: enrollMember.keys
                 .map((Member member) => CheckboxListTile(
-                      value: _checkboxes[member],
+                      value: enrollMember[member],
                       title: Text(member.name, style: TextStyle(fontSize: 18)),
                       onChanged: (bool? value) {
                         setState(() {
-                          _checkboxes[member] = value!;
+                          enrollMember[member] = value!;
                         });
                       },
                     ))
                 .toList(),
           ),
+
           const SizedBox(height: 50),
+
+          // create btn
           OutlinedButton(
             style: OutlinedButton.styleFrom(
               minimumSize: Size(300, 46),
@@ -151,10 +188,33 @@ class _FormWidgetState extends State {
               foregroundColor: Colors.blue,
             ),
             onPressed: () {
+              // check if the form is valid
               if (_formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
-                );
+                // check if any member is enrolled in the project
+                if (enrollMember.values.contains(true)) {
+
+                  // create project object
+                  final project = Project(
+                    projectName: projectNameController.text,
+                    projectDescription: projectDescriptionController.text,
+                    durationRange: durationRange,
+                    members: enrollMember.entries
+                        .where((element) => element.value)
+                        .map((e) => e.key)
+                        .toList(),
+                  );
+                  // add project to projectsListProvider
+                  projectsListProvider.addProject(project);
+
+                  
+
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            "Please put at least one member in the project")),
+                  );
+                }
               }
             },
             child: const Text(

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:project_manager/route/welcome.dart';
-
+import 'providers/projectsListProvider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    // wrap the app with ChangeNotifierProvider so I'm able to access projectsProvider everywhere within app
+    ChangeNotifierProvider(
+      create: (context) => ProjectsListProvider(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -12,13 +16,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Task Spark',
-      home: WelcomePage() // the first page is welcome page
-    );
+        title: 'Task Spark',
+        // the first page is welcome page
+        home: WelcomePage());
   }
 }
-
-
-
-
-

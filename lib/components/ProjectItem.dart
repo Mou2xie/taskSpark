@@ -1,7 +1,10 @@
+// this is the project item component 
+
 import 'package:flutter/material.dart';
 import 'package:project_manager/models/ProjectModel.dart';
 import 'package:project_manager/route/projectDetail.dart';
 
+// take a project instance as props
 class ProjectItem extends StatelessWidget {
   final Project project;
 
@@ -12,6 +15,7 @@ class ProjectItem extends StatelessWidget {
     return GestureDetector(
         onTap: () {
           Navigator.push(context,
+              // need to pass the project data to project detail page, undone
               MaterialPageRoute(builder: (context) => ProjectDetail()));
         },
         child: Container(
@@ -28,15 +32,20 @@ class ProjectItem extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // project name
                   Text(project.projectName,
                       style:
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  
+                  // project duration
                   Text(
-                      "${project.startDate.month}.${project.startDate.day} - ${project.endDate.month}.${project.endDate.day}",
+                      "${project.durationRange.start.month}.${project.durationRange.start.day} - ${project.durationRange.end.month}.${project.durationRange.end.day}",
                       style: TextStyle(fontSize: 16, color: Color(0xff5B6061))),
+                      
                   Expanded(
                     child: Align(
                         alignment: Alignment.bottomLeft,
+                        // project members
                         child: Row(
                           children: project.members
                               .map((item) => item.avatar)
@@ -54,12 +63,12 @@ class ProjectItem extends StatelessWidget {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      "10",
+                      "10", // need to replace here
                       style:
                           TextStyle(fontSize: 40, fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      "/30",
+                      "/30", // need to replace here
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     )

@@ -1,22 +1,27 @@
 import 'TaskModel.dart';
 import 'Member.dart';
+import 'package:flutter/material.dart';
 
 class Project {
   static int _id = 0;
 
   late int id;
   String projectName;
-  DateTime startDate;
-  DateTime endDate;
+  DateTimeRange durationRange;
+  String? projectDescription;
   List<Member> members = [];
   List<Task> tasks = [];
 
-  Project(
-      {required this.projectName,
-      required this.startDate,
-      required this.endDate,
-      required this.tasks}) {
+  Project({
+    required this.projectName,
+    required this.durationRange,
+    required this.members,
+    this.projectDescription,
+  }) {
     id = ++Project._id;
-    members = [Member.xie, Member.sam, Member.isha];
+  }
+
+  void addTask(Task task) {
+    tasks.add(task);
   }
 }
