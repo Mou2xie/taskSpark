@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/ProjectModel.dart';
 import "../models/Member.dart";
 import '../providers/projectsListProvider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() {
   runApp(CreateProject());
@@ -79,8 +80,8 @@ class _FormWidgetState extends State {
 
   @override
   Widget build(BuildContext context) {
-
-    final projectsListProvider = Provider.of<ProjectsListProvider>(context,listen: false);
+    final projectsListProvider =
+        Provider.of<ProjectsListProvider>(context, listen: false);
 
     return Form(
       key: _formKey,
@@ -192,7 +193,6 @@ class _FormWidgetState extends State {
               if (_formKey.currentState!.validate()) {
                 // check if any member is enrolled in the project
                 if (enrollMember.values.contains(true)) {
-
                   // create project object
                   final project = Project(
                     projectName: projectNameController.text,
@@ -206,7 +206,20 @@ class _FormWidgetState extends State {
                   // add project to projectsListProvider
                   projectsListProvider.addProject(project);
 
-                  
+                  // show toast
+                  Fluttertoast.showToast(
+                      msg: "Project created successfully",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+
+                  // after toast shown, jump back to project list
+                  Future.delayed(Duration(seconds: 2), () {
+                    Navigator.pop(context);
+                  });
 
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -218,7 +231,7 @@ class _FormWidgetState extends State {
               }
             },
             child: const Text(
-              'Create',
+              'Create Project',
               style: TextStyle(fontSize: 18),
             ),
           )

@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import './createTask.dart';
+import '../components/ProjectCard.dart';
+import '../components/TaskList.dart';
+import '../models/ProjectModel.dart';
+import '../models/TaskStatus.dart';
 
 class ProjectDetail extends StatelessWidget {
+  final Project project;
+
+  ProjectDetail({required this.project});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,41 +31,28 @@ class ProjectDetail extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Column(
           children: [
-            TopCard(),
-            // list undone
+            ProjectCard(project: project),
+            SizedBox(height: 20),
+            TaskList(
+                tasks: project.getTasksByStatus(TaskStatus.notStarted),
+                taskStatus: TaskStatus.notStarted),
+            SizedBox(height: 20),
+            TaskList(
+                tasks: project.getTasksByStatus(TaskStatus.inProgress),
+                taskStatus: TaskStatus.inProgress),
+            SizedBox(height: 20),
+            TaskList(
+                tasks: project.getTasksByStatus(TaskStatus.finished),
+                taskStatus: TaskStatus.finished),
           ],
         ),
       ),
-    );
-  }
-}
-
-class TopCard extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color.fromARGB(255, 138, 138, 138)),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Text('Project Name', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.calendar_today, size: 20),
-              SizedBox(width: 5),
-              Text('1.22 - 2.22',style: TextStyle(fontSize: 18),),
-            ],
-          ),
-          // prople list undone
-          Text('This is a project description', style: TextStyle(fontSize: 16)),
-        ],
-      ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => CreateTask()));
+          },
+          child: Icon(Icons.add)),
     );
   }
 }

@@ -1,4 +1,4 @@
-// this is the project item component 
+// this is the project item component
 
 import 'package:flutter/material.dart';
 import 'package:project_manager/models/ProjectModel.dart';
@@ -14,9 +14,10 @@ class ProjectItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          Navigator.push(context,
-              // need to pass the project data to project detail page, undone
-              MaterialPageRoute(builder: (context) => ProjectDetail()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProjectDetail(project: project)));
         },
         child: Container(
           decoration: BoxDecoration(
@@ -36,12 +37,12 @@ class ProjectItem extends StatelessWidget {
                   Text(project.projectName,
                       style:
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                  
+
                   // project duration
                   Text(
                       "${project.durationRange.start.month}.${project.durationRange.start.day} - ${project.durationRange.end.month}.${project.durationRange.end.day}",
                       style: TextStyle(fontSize: 16, color: Color(0xff5B6061))),
-                      
+
                   Expanded(
                     child: Align(
                         alignment: Alignment.bottomLeft,
@@ -63,12 +64,19 @@ class ProjectItem extends StatelessWidget {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      "10", // need to replace here
+                      project.finishedTasks.toString(),
                       style:
                           TextStyle(fontSize: 40, fontWeight: FontWeight.w500),
                     ),
+                    SizedBox(width: 5),
                     Text(
-                      "/30", // need to replace here
+                      '/',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      project.totalTasks.toString(),
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     )

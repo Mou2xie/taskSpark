@@ -6,7 +6,7 @@ class ProjectsListProvider extends ChangeNotifier {
 
   // init data for test, need to clean up
   final List<Project> _projectsList = List<Project>.generate(
-      4,
+      1,
       (index) => Project(
           projectName: 'Project lalalalal $index',
           durationRange: DateTimeRange(
