@@ -8,11 +8,11 @@ class ProjectsListProvider extends ChangeNotifier {
   final List<Project> _projectsList = List<Project>.generate(
       1,
       (index) => Project(
-          projectName: 'Project lalalalal $index',
+          projectName: 'Flutter Group Assignment #1',
           durationRange: DateTimeRange(
               start: DateTime.now(),
-              end: DateTime.now().add(Duration(days: 1))),
-          projectDescription: "aaaaaaaaa",
+              end: DateTime.now().add(Duration(days: 5))),
+          projectDescription: "This assignemnt requires us to build a simple app using flutter",
           members: [Member.xie, Member.sam]));
 
   List<Project> get projectsList => _projectsList;

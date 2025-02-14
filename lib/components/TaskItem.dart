@@ -9,12 +9,13 @@ class TaskItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(bottom: 15),
         decoration: BoxDecoration(
           border: Border.all(color: Color(0xffCFCFCF)),
           borderRadius: BorderRadius.circular(10),
         ),
         padding: EdgeInsets.all(12),
-        height: 140,
+        height: 130,
         width: double.infinity,
         child: Row(children: [
           Column(

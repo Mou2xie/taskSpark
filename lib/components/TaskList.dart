@@ -24,12 +24,11 @@ class TaskList extends StatelessWidget {
           ],
         ),
         SizedBox(height: 10),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            return TaskItem(task: tasks[index]);
-          },
+        Column(
+          children: tasks
+              .where((task) => task.status == taskStatus)
+              .map((task) => TaskItem(task: task))
+              .toList(),
         ),
       ],
     );

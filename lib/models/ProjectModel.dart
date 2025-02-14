@@ -32,6 +32,13 @@ class Project {
             end: DateTime.now().add(Duration(days: 1))),
         assignTo: Member.sam,
         priority: Taskpriority.low));
+    addTask(Task(
+        taskName: 'Task 2',
+        duration: DateTimeRange(
+            start: DateTime.now(),
+            end: DateTime.now().add(Duration(days: 1))),
+        assignTo: Member.sam,
+        priority: Taskpriority.medium));
   }
 
   void addTask(Task task) {
