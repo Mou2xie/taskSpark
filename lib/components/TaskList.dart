@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../models/TaskModel.dart';
 import '../models/TaskStatus.dart';
 import '../components/TaskItem.dart';
+import '../models/ProjectModel.dart';
 
 class TaskList extends StatelessWidget {
   final List<Task> tasks;
   final TaskStatus taskStatus;
 
-  TaskList({required this.tasks, required this.taskStatus});
+  TaskList(
+      {required this.tasks, required this.taskStatus});
 
   @override
   Widget build(BuildContext context) {

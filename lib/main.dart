@@ -2,12 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:project_manager/route/welcome.dart';
 import 'providers/projectsListProvider.dart';
+import './providers/taskProvider.dart';
 
 void main() {
   runApp(
     // wrap the app with ChangeNotifierProvider so I'm able to access projectsProvider everywhere within app
-    ChangeNotifierProvider(
-      create: (context) => ProjectsListProvider(), child: const MyApp()));
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ProjectsListProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => TaskProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

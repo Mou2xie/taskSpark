@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/projectsListProvider.dart';
+import '../providers/taskProvider.dart';
 import '../models/Member.dart';
 import '../models/TaskPriority.dart';
-
-void main() {
-  runApp(CreateTask());
-}
+import '../models/TaskModel.dart';
+import '../models/ProjectModel.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateTask extends StatelessWidget {
+
+  final Project project;
+
+  CreateTask({required this.project});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,20 +23,33 @@ class CreateTask extends StatelessWidget {
           ),
         ),
         body: Container(
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: TaskForm(),
-        ));
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: TaskForm(project)));
   }
 }
 
 class TaskForm extends StatefulWidget {
+
+  late final Project project;
+
+  TaskForm(Project project) {
+    this.project = project;
+  }
+
   @override
   createState() {
-    return TaskFormState();
+    return TaskFormState(project);
   }
 }
 
 class TaskFormState extends State<TaskForm> {
+
+  late final Project project;
+
+  TaskFormState(Project project) {
+    this.project = project;
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   // access taskName with taskNameController.text
@@ -55,7 +72,7 @@ class TaskFormState extends State<TaskForm> {
   DateTimeRange durationRange = DateTimeRange(
       start: DateTime.now(), end: DateTime.now().add(Duration(days: 1)));
 
-  // the member and whether they are enrolled in the project
+  // the member available to assign the task to
   Map<Member, String> teamMembers = {
     Member.xie: Member.xie.name,
     Member.sam: Member.sam.name,
@@ -89,8 +106,8 @@ class TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    final projectsListProvider =
-        Provider.of<ProjectsListProvider>(context, listen: false);
+    
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
 
     return Form(
       key: _formKey,
@@ -220,8 +237,35 @@ class TaskFormState extends State<TaskForm> {
               minimumSize: Size(300, 46),
               side: BorderSide(color: Colors.blue, width: 2),
               foregroundColor: Colors.blue,
-            ), 
-            onPressed: () {},
+            ),
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+
+                Task task = Task(
+                  taskName: taskNameController.text,
+                  duration: durationRange,
+                  assignTo: assignTo,
+                  priority: taskPriority,
+                );
+
+                taskProvider.addtaskToProject(task, project);
+
+                // show toast
+                  Fluttertoast.showToast(
+                      msg: "Task created successfully",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+
+                  // after toast shown, jump back to project Detail
+                  Future.delayed(Duration(seconds: 2), () {
+                    Navigator.pop(context);
+                  });
+              }
+            },
             child: const Text(
               'Create Task',
               style: TextStyle(fontSize: 18),

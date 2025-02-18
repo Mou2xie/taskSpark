@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:project_manager/providers/taskProvider.dart';
+import 'package:provider/provider.dart';
+import '../providers/projectsListProvider.dart';
 import '../models/TaskModel.dart';
+import '../models/TaskStatus.dart';
+import '../models/ProjectModel.dart';
 
 class TaskItem extends StatelessWidget {
   late Task task;
@@ -8,53 +13,86 @@ class TaskItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 15),
-        decoration: BoxDecoration(
-          border: Border.all(color: Color(0xffCFCFCF)),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: EdgeInsets.all(12),
-        height: 130,
-        width: double.infinity,
-        child: Row(children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // project name
-              Text(task.taskName,
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-
-              // project duration
-              Text(
-                  "${task.duration.start.month}.${task.duration.start.day} - ${task.duration.end.month}.${task.duration.end.day}",
-                  style: TextStyle(fontSize: 16, color: Color(0xff5B6061))),
-
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.bottomLeft,
-                      // project members
-                      child: task.assignTo.avatar))
-            ],
+    return Consumer<TaskProvider>(builder: (context, taskProvider, child) {
+      return Container(
+          margin: EdgeInsets.only(bottom: 15),
+          decoration: BoxDecoration(
+            border: Border.all(color: Color(0xffCFCFCF)),
+            borderRadius: BorderRadius.circular(10),
           ),
-          Spacer(),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // project priority
-              Text(task.priority.string,
-                  style: TextStyle(
-                      fontSize: 22,
-                      color: task.priority.color,
-                      fontWeight: FontWeight.bold)),
-              IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.more_horiz,
-                    size: 35,
-                  ))
-            ],
-          ),
-        ]));
+          padding: EdgeInsets.all(12),
+          height: 130,
+          width: double.infinity,
+          child: Row(children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // project name
+                Text(task.taskName,
+                    style:
+                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+
+                // project duration
+                Text(
+                    "${task.duration.start.month}.${task.duration.start.day} - ${task.duration.end.month}.${task.duration.end.day}",
+                    style: TextStyle(fontSize: 16, color: Color(0xff5B6061))),
+
+                Expanded(
+                    child: Align(
+                        alignment: Alignment.bottomLeft,
+                        // project members
+                        child: task.assignTo.avatar))
+              ],
+            ),
+            Spacer(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // project priority
+                Text(task.priority.string,
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: task.priority.color,
+                        fontWeight: FontWeight.bold)),
+                PopupMenuButton(
+                    icon: Icon(
+                      Icons.more_horiz,
+                      size: 35,
+                    ),
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                            child: ListTile(
+                          title: Text('Not Start'),
+                          onTap: () {
+                            taskProvider.updateTaskStatus(
+                                task, TaskStatus.notStarted);
+                            Navigator.pop(context);
+                          },
+                        )),
+                        PopupMenuItem(
+                            child: ListTile(
+                          title: Text('In Progress'),
+                          onTap: () {
+                            taskProvider.updateTaskStatus(
+                                task, TaskStatus.inProgress);
+                            Navigator.pop(context);
+                          },
+                        )),
+                        PopupMenuItem(
+                            child: ListTile(
+                          title: Text('Finished'),
+                          onTap: () {
+                            taskProvider.updateTaskStatus(
+                                task, TaskStatus.finished);
+                            Navigator.pop(context);
+                          },
+                        )),
+                      ];
+                    })
+              ],
+            ),
+          ]));
+    });
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_manager/components/ProjectItem.dart';
-import 'package:project_manager/models/ProjectModel.dart';
+import 'package:project_manager/providers/taskProvider.dart';
 import 'package:provider/provider.dart';
 import 'createProject.dart';
 import 'package:project_manager/providers/projectsListProvider.dart';
@@ -13,8 +13,8 @@ class ProjectList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // get project list data from ProjectsListProvider
-    return Consumer<ProjectsListProvider>(
-        builder: (context, projectsListProvider, child) {
+    return Consumer2<ProjectsListProvider, TaskProvider>(
+        builder: (context, projectsListProvider, taskProvider, child) {
       return Scaffold(
           appBar: AppBar(
             title: Text(
