@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/ProjectModel.dart';
 
+// The top component in the project detail page
 class ProjectCard extends StatelessWidget {
   final Project project;
 
@@ -44,3 +45,5 @@ class ProjectCard extends StatelessWidget {
     );
   }
 }
+
+

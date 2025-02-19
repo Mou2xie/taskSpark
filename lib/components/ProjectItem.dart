@@ -1,4 +1,4 @@
-// this is the project item component
+// shown in the project list page
 
 import 'package:flutter/material.dart';
 import 'package:project_manager/models/ProjectModel.dart';

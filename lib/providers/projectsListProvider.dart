@@ -23,7 +23,6 @@ class ProjectsListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // remove project not used for now
   void removeProject(Project project) {
     _projectsList.remove(project);
     notifyListeners();

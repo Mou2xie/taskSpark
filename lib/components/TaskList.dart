@@ -4,6 +4,7 @@ import '../models/TaskStatus.dart';
 import '../components/TaskItem.dart';
 import '../models/ProjectModel.dart';
 
+// display a list of tasks with the specific status
 class TaskList extends StatelessWidget {
   final List<Task> tasks;
   final TaskStatus taskStatus;

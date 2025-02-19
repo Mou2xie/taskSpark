@@ -14,7 +14,7 @@ class CreateProject extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: Text( 
             'New Project',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),

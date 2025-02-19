@@ -23,7 +23,7 @@ enum Member {
     switch (this) {
       case Member.sam:
         return CircleAvatar(
-          backgroundImage: AssetImage('lib/assets/images/xie.png'),
+          backgroundImage: AssetImage('lib/assets/images/sam.png'),
         );
       case Member.xie:
         return CircleAvatar(
@@ -31,11 +31,11 @@ enum Member {
         );
       case Member.isha:
         return CircleAvatar(
-          backgroundImage: AssetImage('lib/assets/images/xie.png'),
+          backgroundImage: AssetImage('lib/assets/images/isha.png'),
         );
       case Member.shamshad:
         return CircleAvatar(
-          backgroundImage: AssetImage('lib/assets/images/xie.png'),
+          backgroundImage: AssetImage('lib/assets/images/sham.png'),
         );
     }
   }

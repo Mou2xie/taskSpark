@@ -6,6 +6,7 @@ import '../models/TaskModel.dart';
 import '../models/TaskStatus.dart';
 import '../models/ProjectModel.dart';
 
+// shown in the project detail page
 class TaskItem extends StatelessWidget {
   late Task task;
 
@@ -27,12 +28,12 @@ class TaskItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // project name
+                // task name
                 Text(task.taskName,
                     style:
                         TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
 
-                // project duration
+                // task duration
                 Text(
                     "${task.duration.start.month}.${task.duration.start.day} - ${task.duration.end.month}.${task.duration.end.day}",
                     style: TextStyle(fontSize: 16, color: Color(0xff5B6061))),
@@ -40,7 +41,7 @@ class TaskItem extends StatelessWidget {
                 Expanded(
                     child: Align(
                         alignment: Alignment.bottomLeft,
-                        // project members
+                        // task members
                         child: task.assignTo.avatar))
               ],
             ),
@@ -48,7 +49,7 @@ class TaskItem extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // project priority
+                // task priority
                 Text(task.priority.string,
                     style: TextStyle(
                         fontSize: 22,
@@ -65,6 +66,7 @@ class TaskItem extends StatelessWidget {
                             child: ListTile(
                           title: Text('Not Start'),
                           onTap: () {
+                            // update task status to not started
                             taskProvider.updateTaskStatus(
                                 task, TaskStatus.notStarted);
                             Navigator.pop(context);
@@ -74,6 +76,7 @@ class TaskItem extends StatelessWidget {
                             child: ListTile(
                           title: Text('In Progress'),
                           onTap: () {
+                            // update task status to in progress
                             taskProvider.updateTaskStatus(
                                 task, TaskStatus.inProgress);
                             Navigator.pop(context);
@@ -83,6 +86,7 @@ class TaskItem extends StatelessWidget {
                             child: ListTile(
                           title: Text('Finished'),
                           onTap: () {
+                            // update task status to finished
                             taskProvider.updateTaskStatus(
                                 task, TaskStatus.finished);
                             Navigator.pop(context);
