@@ -6,7 +6,7 @@ import './providers/taskProvider.dart';
 
 void main() {
   runApp(
-    // wrap the app with ChangeNotifierProvider so I'm able to access projectsProvider everywhere within app
+    // wrap the app with MultiProvider so I'm able to access states everywhere within app
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
