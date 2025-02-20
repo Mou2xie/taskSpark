@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:project_manager/providers/taskProvider.dart';
 import 'package:provider/provider.dart';
-import '../providers/projectsListProvider.dart';
 import '../models/TaskModel.dart';
 import '../models/TaskStatus.dart';
-import '../models/ProjectModel.dart';
 
 // shown in the project detail page
 class TaskItem extends StatelessWidget {

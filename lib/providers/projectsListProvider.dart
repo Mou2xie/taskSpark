@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/ProjectModel.dart';
 import '../models/Member.dart';
-import '../models/TaskStatus.dart';
 
 class ProjectsListProvider extends ChangeNotifier {
   // init data for test, need to clean up

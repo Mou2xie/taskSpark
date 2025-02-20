@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/TaskModel.dart';
 import '../models/TaskStatus.dart';
 import '../components/TaskItem.dart';
-import '../models/ProjectModel.dart';
 
 // display a list of tasks with the specific status
 class TaskList extends StatelessWidget {

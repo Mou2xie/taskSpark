@@ -1,6 +1,5 @@
 import 'TaskModel.dart';
 import 'Member.dart';
-import 'TaskPriority.dart';
 import 'TaskStatus.dart';
 import 'package:flutter/material.dart';
 
