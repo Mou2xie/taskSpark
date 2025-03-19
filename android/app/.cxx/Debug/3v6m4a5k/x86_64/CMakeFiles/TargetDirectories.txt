@@ -1,0 +1,2 @@
+/Users/xieyongjie/Documents/Projects/Flutter/taskSpark/android/app/.cxx/Debug/3v6m4a5k/x86_64/CMakeFiles/edit_cache.dir
+/Users/xieyongjie/Documents/Projects/Flutter/taskSpark/android/app/.cxx/Debug/3v6m4a5k/x86_64/CMakeFiles/rebuild_cache.dir
