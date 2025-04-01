@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:project_manager/providers/taskProvider.dart';
 import 'package:provider/provider.dart';
 import '../models/TaskModel.dart';
-import '../models/TaskStatus.dart';
 
 // shown in the project detail page
 class TaskItem extends StatelessWidget {
@@ -10,11 +9,23 @@ class TaskItem extends StatelessWidget {
 
   TaskItem({required this.task});
 
+  Color _getStatusColor(TaskStatus status) {
+    switch (status) {
+      case TaskStatus.notStarted:
+        return Colors.grey;
+      case TaskStatus.inProgress:
+        return Colors.orange;
+      case TaskStatus.finished:
+        return Colors.green;
+    }
+    return Colors.grey;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TaskProvider>(builder: (context, taskProvider, child) {
       return Container(
-          margin: EdgeInsets.only(bottom: 15),
+          margin: EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
             border: Border.all(color: Color(0xffCFCFCF)),
             borderRadius: BorderRadius.circular(10),
@@ -26,10 +37,21 @@ class TaskItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // task name
-                Text(task.taskName,
-                    style:
-                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                // task name with pin icon
+                Row(
+                  children: [
+                    Text(task.taskName,
+                        style:
+                            TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                    if (task.isPinned) ...[
+                      SizedBox(width: 8),
+                      Icon(Icons.push_pin, 
+                          color: Colors.blue, 
+                          size: 20,
+                          textDirection: TextDirection.ltr),
+                    ],
+                  ],
+                ),
 
                 // task duration
                 Text(
@@ -39,8 +61,29 @@ class TaskItem extends StatelessWidget {
                 Expanded(
                     child: Align(
                         alignment: Alignment.bottomLeft,
-                        // task members
-                        child: task.assignTo.avatar))
+                        child: Row(
+                          children: [
+                            // task status
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: _getStatusColor(task.status).withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                task.status.string,
+                                style: TextStyle(
+                                  color: _getStatusColor(task.status),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            // task members
+                            task.assignTo.avatar,
+                          ],
+                        ))),
               ],
             ),
             Spacer(),
@@ -62,9 +105,20 @@ class TaskItem extends StatelessWidget {
                       return [
                         PopupMenuItem(
                             child: ListTile(
+                          title: Text(task.isPinned ? 'Unpin' : 'Pin'),
+                          onTap: () {
+                            if (task.isPinned) {
+                              taskProvider.unpinTask(task);
+                            } else {
+                              taskProvider.pinTask(task);
+                            }
+                            Navigator.pop(context);
+                          },
+                        )),
+                        PopupMenuItem(
+                            child: ListTile(
                           title: Text('Not Start'),
                           onTap: () {
-                            // update task status to not started
                             taskProvider.updateTaskStatus(
                                 task, TaskStatus.notStarted);
                             Navigator.pop(context);
@@ -74,7 +128,6 @@ class TaskItem extends StatelessWidget {
                             child: ListTile(
                           title: Text('In Progress'),
                           onTap: () {
-                            // update task status to in progress
                             taskProvider.updateTaskStatus(
                                 task, TaskStatus.inProgress);
                             Navigator.pop(context);
@@ -84,7 +137,6 @@ class TaskItem extends StatelessWidget {
                             child: ListTile(
                           title: Text('Finished'),
                           onTap: () {
-                            // update task status to finished
                             taskProvider.updateTaskStatus(
                                 task, TaskStatus.finished);
                             Navigator.pop(context);

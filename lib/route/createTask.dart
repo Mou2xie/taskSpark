@@ -63,10 +63,15 @@ class TaskFormState extends State<TaskForm> {
   }
 
   //store the member that the task is assigned to
-  Member assignTo = Member.xie;
+  late Member assignTo = Member(
+    name: 'Xie',
+    avatar: CircleAvatar(
+      backgroundImage: AssetImage('lib/assets/images/xie.png'),
+    ),
+  );
 
   //store the priority of the task
-  Taskpriority taskPriority = Taskpriority.low;
+  TaskPriority taskPriority = TaskPriority.low;
 
   // durationRange selected by user
   DateTimeRange durationRange = DateTimeRange(
@@ -74,17 +79,37 @@ class TaskFormState extends State<TaskForm> {
 
   // the member available to assign the task to
   Map<Member, String> teamMembers = {
-    Member.xie: Member.xie.name,
-    Member.sam: Member.sam.name,
-    Member.shamshad: Member.shamshad.name,
-    Member.isha: Member.isha.name,
+    Member(
+      name: 'Xie',
+      avatar: CircleAvatar(
+        backgroundImage: AssetImage('lib/assets/images/xie.png'),
+      ),
+    ): 'Xie',
+    Member(
+      name: 'Sam',
+      avatar: CircleAvatar(
+        backgroundImage: AssetImage('lib/assets/images/sam.png'),
+      ),
+    ): 'Sam',
+    Member(
+      name: 'Shamshad',
+      avatar: CircleAvatar(
+        backgroundImage: AssetImage('lib/assets/images/sham.png'),
+      ),
+    ): 'Shamshad',
+    Member(
+      name: 'Isha',
+      avatar: CircleAvatar(
+        backgroundImage: AssetImage('lib/assets/images/isha.png'),
+      ),
+    ): 'Isha',
   };
 
   // task priority Enum
-  Map<Taskpriority, String> taskPriorities = {
-    Taskpriority.high: Taskpriority.high.string,
-    Taskpriority.medium: Taskpriority.medium.string,
-    Taskpriority.low: Taskpriority.low.string,
+  Map<TaskPriority, String> taskPriorities = {
+    TaskPriority.high: TaskPriority.high.string,
+    TaskPriority.medium: TaskPriority.medium.string,
+    TaskPriority.low: TaskPriority.low.string,
   };
 
   // get duration range from user and set durationRange state
@@ -203,7 +228,7 @@ class TaskFormState extends State<TaskForm> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: taskPriorities.keys.map((tp) {
-              return RadioListTile<Taskpriority>(
+              return RadioListTile<TaskPriority>(
                 title: Wrap(
                   children: [
                     Container(
@@ -246,6 +271,7 @@ class TaskFormState extends State<TaskForm> {
                   duration: durationRange,
                   assignTo: assignTo,
                   priority: taskPriority,
+                  status: TaskStatus.notStarted,
                 );
 
                 taskProvider.addtaskToProject(task, project);

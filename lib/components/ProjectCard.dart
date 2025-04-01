@@ -38,7 +38,10 @@ class ProjectCard extends StatelessWidget {
           SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: project.members.map((member) => member.avatar).toList(),
+            children: project.members.map((member) => Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              child: member.avatar,
+            )).toList(),
           )
         ],
       ),

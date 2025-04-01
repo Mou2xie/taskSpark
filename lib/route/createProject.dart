@@ -55,10 +55,30 @@ class _FormWidgetState extends State {
 
   // the member and whether they are enrolled in the project
   Map<Member, bool> enrollMember = {
-    Member.xie: false,
-    Member.sam: false,
-    Member.shamshad: false,
-    Member.isha: false,
+    Member(
+      name: 'Xie',
+      avatar: CircleAvatar(
+        backgroundImage: AssetImage('lib/assets/images/xie.png'),
+      ),
+    ): false,
+    Member(
+      name: 'Sam',
+      avatar: CircleAvatar(
+        backgroundImage: AssetImage('lib/assets/images/sam.png'),
+      ),
+    ): false,
+    Member(
+      name: 'Shamshad',
+      avatar: CircleAvatar(
+        backgroundImage: AssetImage('lib/assets/images/sham.png'),
+      ),
+    ): false,
+    Member(
+      name: 'Isha',
+      avatar: CircleAvatar(
+        backgroundImage: AssetImage('lib/assets/images/isha.png'),
+      ),
+    ): false,
   };
 
   // get duration range from user and set durationRange state

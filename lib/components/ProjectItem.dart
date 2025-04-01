@@ -49,7 +49,10 @@ class ProjectItem extends StatelessWidget {
                         // project members
                         child: Row(
                           children: project.members
-                              .map((item) => item.avatar)
+                              .map((item) => Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 4),
+                                    child: item.avatar,
+                                  ))
                               .toList(),
                         )),
                   )

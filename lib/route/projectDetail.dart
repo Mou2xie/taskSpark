@@ -3,10 +3,15 @@ import 'package:project_manager/providers/taskProvider.dart';
 import './createTask.dart';
 import '../components/ProjectCard.dart';
 import '../components/TaskList.dart';
+import '../components/TaskItem.dart';
 import '../models/ProjectModel.dart';
-import '../models/TaskStatus.dart';
+import '../models/TaskModel.dart';
+import '../models/TaskSortMethod.dart';
+import '../models/Member.dart';
+import '../models/TaskPriority.dart';
 import 'package:provider/provider.dart';
 import '../providers/projectsListProvider.dart';
+import './taskDetail.dart';
 
 class ProjectDetail extends StatelessWidget {
   final Project project;
@@ -73,20 +78,202 @@ class ProjectDetail extends StatelessWidget {
         return SingleChildScrollView(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ProjectCard(project: project),
               SizedBox(height: 20),
-              TaskList(
-                  tasks: project.getTasksByStatus(TaskStatus.notStarted),
-                  taskStatus: TaskStatus.notStarted),
+              // Filter and sort options
+              Card(
+                margin: EdgeInsets.zero,
+                child: ExpansionTile(
+                  title: Row(
+                    children: [
+                      Icon(Icons.filter_list),
+                      SizedBox(width: 10),
+                      Text(
+                        "Filter & Sort",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (taskProvider.filterStatus != null ||
+                          taskProvider.filterPriority != null ||
+                          taskProvider.filterMember != null) ...[
+                        SizedBox(width: 10),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            "Filtered",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton.icon(
+                                onPressed: () {
+                                  taskProvider.clearFilters();
+                                },
+                                icon: Icon(Icons.clear_all),
+                                label: Text("Clear Filters"),
+                              ),
+                            ],
+                          ),
+                          Wrap(
+                            spacing: 20,
+                            runSpacing: 15,
+                            children: [
+                              // Status filter
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text("Status:"),
+                                  SizedBox(width: 8),
+                                  DropdownButton<TaskStatus?>(
+                                    value: taskProvider.filterStatus,
+                                    hint: Text("All"),
+                                    onChanged: (value) {
+                                      taskProvider.setFilterStatus(value);
+                                    },
+                                    items: [
+                                      DropdownMenuItem<TaskStatus?>(
+                                        value: null,
+                                        child: Text("All"),
+                                      ),
+                                      ...TaskStatus.values.map((status) {
+                                        return DropdownMenuItem<TaskStatus>(
+                                          value: status,
+                                          child: Text(status.string),
+                                        );
+                                      }).toList(),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              // Priority filter
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text("Priority:"),
+                                  SizedBox(width: 8),
+                                  DropdownButton<TaskPriority?>(
+                                    value: taskProvider.filterPriority,
+                                    hint: Text("All"),
+                                    onChanged: (value) {
+                                      taskProvider.setFilterPriority(value);
+                                    },
+                                    items: [
+                                      DropdownMenuItem<TaskPriority?>(
+                                        value: null,
+                                        child: Text("All"),
+                                      ),
+                                      ...TaskPriority.values.map((priority) {
+                                        return DropdownMenuItem<TaskPriority>(
+                                          value: priority,
+                                          child: Text(priority.string),
+                                        );
+                                      }).toList(),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              // Member filter
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text("Member:"),
+                                  SizedBox(width: 8),
+                                  DropdownButton<Member?>(
+                                    value: taskProvider.filterMember,
+                                    hint: Text("All"),
+                                    onChanged: (value) {
+                                      taskProvider.setFilterMember(value);
+                                    },
+                                    items: [
+                                      DropdownMenuItem<Member?>(
+                                        value: null,
+                                        child: Text("All"),
+                                      ),
+                                      ...project.members.map((member) {
+                                        return DropdownMenuItem<Member>(
+                                          value: member,
+                                          child: Text(member.name),
+                                        );
+                                      }).toList(),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              // Sort method
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text("Sort:"),
+                                  SizedBox(width: 8),
+                                  DropdownButton<TaskSortMethod>(
+                                    value: taskProvider.currentSortMethod,
+                                    onChanged: (TaskSortMethod? method) {
+                                      if (method != null) {
+                                        taskProvider.setSortMethod(method);
+                                      }
+                                    },
+                                    items: TaskSortMethod.values.map((method) {
+                                      return DropdownMenuItem<TaskSortMethod>(
+                                        value: method,
+                                        child: Text(method.string),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               SizedBox(height: 20),
-              TaskList(
-                  tasks: project.getTasksByStatus(TaskStatus.inProgress),
-                  taskStatus: TaskStatus.inProgress),
-              SizedBox(height: 20),
-              TaskList(
-                  tasks: project.getTasksByStatus(TaskStatus.finished),
-                  taskStatus: TaskStatus.finished),
+              // 任务列表
+              ...taskProvider.getFilteredAndSortedTasks(project.tasks).map((task) {
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TaskDetail(
+                              task: task,
+                              currentUser: project.members.first, // 使用项目第一个成员作为当前用户
+                            ),
+                          ),
+                        );
+                      },
+                      child: TaskItem(task: task),
+                    ),
+                    SizedBox(height: 8),
+                  ],
+                );
+              }).toList(),
             ],
           ),
         );
