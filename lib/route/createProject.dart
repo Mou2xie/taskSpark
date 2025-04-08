@@ -9,86 +9,38 @@ void main() {
   runApp(CreateProject());
 }
 
-class CreateProject extends StatelessWidget {
+class CreateProject extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text( 
-            'New Project',
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-        ),
-        body: Container(
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: FormWidget(),
-        ));
-  }
+  _CreateProjectState createState() => _CreateProjectState();
 }
 
-class FormWidget extends StatefulWidget {
-  @override
-  createState() {
-    return _FormWidgetState();
-  }
-}
-
-class _FormWidgetState extends State {
+class _CreateProjectState extends State<CreateProject> {
   final _formKey = GlobalKey<FormState>();
-
-  // access projectName with projectNameController.text
   final projectNameController = TextEditingController();
-  // access projectDescription with projectDescriptionController.text
   final projectDescriptionController = TextEditingController();
+  final memberNameController = TextEditingController();
+  List<Member> members = [];
+
+  DateTimeRange durationRange = DateTimeRange(
+    start: DateTime.now(),
+    end: DateTime.now().add(Duration(days: 7)),
+  );
 
   @override
   void dispose() {
-    //clean controllers when the widget is removed
     projectNameController.dispose();
     projectDescriptionController.dispose();
+    memberNameController.dispose();
     super.dispose();
   }
 
-  // durationRange selected by user
-  DateTimeRange durationRange = DateTimeRange(
-      start: DateTime.now(), end: DateTime.now().add(Duration(days: 1)));
-
-  // the member and whether they are enrolled in the project
-  Map<Member, bool> enrollMember = {
-    Member(
-      name: 'Xie',
-      avatar: CircleAvatar(
-        backgroundImage: AssetImage('lib/assets/images/xie.png'),
-      ),
-    ): false,
-    Member(
-      name: 'Sam',
-      avatar: CircleAvatar(
-        backgroundImage: AssetImage('lib/assets/images/sam.png'),
-      ),
-    ): false,
-    Member(
-      name: 'Shamshad',
-      avatar: CircleAvatar(
-        backgroundImage: AssetImage('lib/assets/images/sham.png'),
-      ),
-    ): false,
-    Member(
-      name: 'Isha',
-      avatar: CircleAvatar(
-        backgroundImage: AssetImage('lib/assets/images/isha.png'),
-      ),
-    ): false,
-  };
-
-  // get duration range from user and set durationRange state
   Future<void> selectDurationRange(BuildContext context) async {
     DateTimeRange? picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
       initialDateRange: durationRange,
-      saveText: "Comfirm",
+      saveText: "Confirm",
     );
 
     if (picked != null) {
@@ -98,165 +50,191 @@ class _FormWidgetState extends State {
     }
   }
 
+  void _addMember() {
+    if (memberNameController.text.trim().isNotEmpty) {
+      setState(() {
+        members.add(Member(name: memberNameController.text.trim()));
+        memberNameController.clear();
+      });
+    }
+  }
+
+  void _removeMember(int index) {
+    setState(() {
+      members.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    
-    final projectsListProvider =
-        Provider.of<ProjectsListProvider>(context, listen: false);
-
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          // project name input box
-          TextFormField(
-            controller: projectNameController,
-            decoration: InputDecoration(
-              labelText: 'Project Name',
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter project name.';
-              }
-              return null;
-            },
-          ),
-
-          SizedBox(height: 20),
-
-          // duration range input box
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffCFCFCF)),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.punch_clock_outlined,
-                  size: 28,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'New Project',
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: projectNameController,
+                decoration: InputDecoration(
+                  labelText: 'Project Name',
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(width: 2),
-                Text(
-                  "Duration:",
-                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter project name';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: projectDescriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Description (Optional)',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
                 ),
-                SizedBox(width: 10),
-                Text(
-                  "${durationRange!.start.month}.${durationRange!.start.day} - ${durationRange!.end.month}.${durationRange!.end.day}",
-                  style: TextStyle(fontSize: 20),
+                maxLines: 3,
+              ),
+              SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Color(0xffCFCFCF)),
+                  borderRadius: BorderRadius.circular(5),
                 ),
-                Spacer(),
-                IconButton(
-                    onPressed: () => selectDurationRange(context),
-                    icon: Icon(
-                      Icons.date_range,
-                      size: 35,
-                    )),
-              ],
-            ),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 28),
+                    SizedBox(width: 10),
+                    Text(
+                      "Duration:",
+                      style: TextStyle(fontSize: 20, color: Colors.grey),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      "${durationRange.start.month}.${durationRange.start.day} - ${durationRange.end.month}.${durationRange.end.day}",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () => selectDurationRange(context),
+                      icon: Icon(Icons.date_range, size: 35),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 30),
+              Text(
+                "Team Members",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: memberNameController,
+                      decoration: InputDecoration(
+                        labelText: 'Member Name',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  IconButton(
+                    onPressed: _addMember,
+                    icon: Icon(Icons.add_circle, size: 30, color: Colors.blue),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              if (members.isEmpty)
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Text(
+                    'No members added yet',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                )
+              else
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: members.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: members[index].defaultAvatar,
+                      title: Text(members[index].name),
+                      trailing: IconButton(
+                        icon: Icon(Icons.remove_circle, color: Colors.red),
+                        onPressed: () => _removeMember(index),
+                      ),
+                    );
+                  },
+                ),
+              SizedBox(height: 30),
+              Center(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: Size(300, 46),
+                    side: BorderSide(color: Colors.blue, width: 2),
+                    foregroundColor: Colors.blue,
+                  ),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      if (members.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please add at least one team member'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      final project = Project(
+                        projectName: projectNameController.text,
+                        durationRange: durationRange,
+                        projectDescription: projectDescriptionController.text.trim(),
+                        members: members,
+                      );
+
+                      Provider.of<ProjectsListProvider>(context, listen: false)
+                          .addProject(project);
+
+                      Fluttertoast.showToast(
+                        msg: "Project created successfully",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.green,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+
+                      Future.delayed(Duration(seconds: 2), () {
+                        Navigator.pop(context);
+                      });
+                    }
+                  },
+                  child: Text(
+                    'Create Project',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ],
           ),
-
-          const SizedBox(height: 20),
-
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text("Project Description",
-                style: TextStyle(fontSize: 18, color: Colors.grey)),
-          ),
-          SizedBox(height: 5),
-
-          // project description input box
-          TextFormField(
-            maxLines: 4,
-            controller: projectDescriptionController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text("Team Members",
-                style: TextStyle(fontSize: 18, color: Colors.grey)),
-          ),
-          SizedBox(height: 5),
-
-          // team members checkbox
-          ListView(
-            shrinkWrap: true,
-            children: enrollMember.keys
-                .map((Member member) => CheckboxListTile(
-                      value: enrollMember[member],
-                      title: Text(member.name, style: TextStyle(fontSize: 18)),
-                      onChanged: (bool? value) {
-                        setState(() {
-                          enrollMember[member] = value!;
-                        });
-                      },
-                    ))
-                .toList(),
-          ),
-
-          const SizedBox(height: 50),
-
-          // create btn
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              minimumSize: Size(300, 46),
-              side: BorderSide(color: Colors.blue, width: 2),
-              foregroundColor: Colors.blue,
-            ),
-            onPressed: () {
-              // check if the form is valid
-              if (_formKey.currentState!.validate()) {
-                // check if any member is enrolled in the project
-                if (enrollMember.values.contains(true)) {
-                  // create project object
-                  final project = Project(
-                    projectName: projectNameController.text,
-                    projectDescription: projectDescriptionController.text,
-                    durationRange: durationRange,
-                    members: enrollMember.entries
-                        .where((element) => element.value)
-                        .map((e) => e.key)
-                        .toList(),
-                  );
-                  // add project to projectsListProvider
-                  projectsListProvider.addProject(project);
-
-                  // show toast
-                  Fluttertoast.showToast(
-                      msg: "Project created successfully",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.green,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-
-                  // after toast shown, jump back to project list
-                  Future.delayed(Duration(seconds: 2), () {
-                    Navigator.pop(context);
-                  });
-
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            "Please put at least one member in the project")),
-                  );
-                }
-              }
-            },
-            child: const Text(
-              'Create Project',
-              style: TextStyle(fontSize: 18),
-            ),
-          )
-        ],
+        ),
       ),
     );
   }

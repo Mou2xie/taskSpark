@@ -33,120 +33,107 @@ class TaskItem extends StatelessWidget {
           padding: EdgeInsets.all(12),
           height: 130,
           width: double.infinity,
-          child: Row(children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // task name with pin icon
-                Row(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(task.taskName,
-                        style:
-                            TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                    if (task.isPinned) ...[
-                      SizedBox(width: 8),
-                      Icon(Icons.push_pin, 
-                          color: Colors.blue, 
-                          size: 20,
-                          textDirection: TextDirection.ltr),
-                    ],
+                    // task name with pin icon
+                    Row(
+                      children: [
+                        Text(task.taskName,
+                            style:
+                                TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                        if (task.isPinned) ...[
+                          SizedBox(width: 8),
+                          Icon(Icons.push_pin, 
+                              color: Colors.blue, 
+                              size: 20,
+                              textDirection: TextDirection.ltr),
+                        ],
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    // task duration
+                    Text(
+                        "${task.duration.start.month}.${task.duration.start.day} - ${task.duration.end.month}.${task.duration.end.day}",
+                        style: TextStyle(fontSize: 16, color: Color(0xff5B6061))),
+                    Spacer(),
+                    // assigned member
+                    Row(
+                      children: [
+                        task.assignTo.defaultAvatar,
+                        SizedBox(width: 8),
+                        Text(task.assignTo.name,
+                            style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
                   ],
                 ),
-
-                // task duration
-                Text(
-                    "${task.duration.start.month}.${task.duration.start.day} - ${task.duration.end.month}.${task.duration.end.day}",
-                    style: TextStyle(fontSize: 16, color: Color(0xff5B6061))),
-
-                Expanded(
-                    child: Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Row(
-                          children: [
-                            // task status
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: _getStatusColor(task.status).withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                task.status.string,
-                                style: TextStyle(
-                                  color: _getStatusColor(task.status),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            // task members
-                            task.assignTo.avatar,
-                          ],
-                        ))),
-              ],
-            ),
-            Spacer(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // task priority
-                Text(task.priority.string,
-                    style: TextStyle(
-                        fontSize: 22,
-                        color: task.priority.color,
-                        fontWeight: FontWeight.bold)),
-                PopupMenuButton(
-                    icon: Icon(
-                      Icons.more_horiz,
-                      size: 35,
-                    ),
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                            child: ListTile(
-                          title: Text(task.isPinned ? 'Unpin' : 'Pin'),
-                          onTap: () {
-                            if (task.isPinned) {
-                              taskProvider.unpinTask(task);
-                            } else {
-                              taskProvider.pinTask(task);
-                            }
-                            Navigator.pop(context);
-                          },
-                        )),
-                        PopupMenuItem(
-                            child: ListTile(
-                          title: Text('Not Start'),
-                          onTap: () {
-                            taskProvider.updateTaskStatus(
-                                task, TaskStatus.notStarted);
-                            Navigator.pop(context);
-                          },
-                        )),
-                        PopupMenuItem(
-                            child: ListTile(
-                          title: Text('In Progress'),
-                          onTap: () {
-                            taskProvider.updateTaskStatus(
-                                task, TaskStatus.inProgress);
-                            Navigator.pop(context);
-                          },
-                        )),
-                        PopupMenuItem(
-                            child: ListTile(
-                          title: Text('Finished'),
-                          onTap: () {
-                            taskProvider.updateTaskStatus(
-                                task, TaskStatus.finished);
-                            Navigator.pop(context);
-                          },
-                        )),
-                      ];
-                    })
-              ],
-            ),
-          ]));
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // task priority
+                  Text(task.priority.string,
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: task.priority.color,
+                          fontWeight: FontWeight.bold)),
+                  PopupMenuButton(
+                      icon: Icon(
+                        Icons.more_horiz,
+                        size: 35,
+                      ),
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                              child: ListTile(
+                            title: Text(task.isPinned ? 'Unpin' : 'Pin'),
+                            onTap: () {
+                              if (task.isPinned) {
+                                taskProvider.unpinTask(task);
+                              } else {
+                                taskProvider.pinTask(task);
+                              }
+                              Navigator.pop(context);
+                            },
+                          )),
+                          PopupMenuItem(
+                              child: ListTile(
+                            title: Text('Not Start'),
+                            onTap: () {
+                              taskProvider.updateTaskStatus(
+                                  task, TaskStatus.notStarted);
+                              Navigator.pop(context);
+                            },
+                          )),
+                          PopupMenuItem(
+                              child: ListTile(
+                            title: Text('In Progress'),
+                            onTap: () {
+                              taskProvider.updateTaskStatus(
+                                  task, TaskStatus.inProgress);
+                              Navigator.pop(context);
+                            },
+                          )),
+                          PopupMenuItem(
+                              child: ListTile(
+                            title: Text('Finished'),
+                            onTap: () {
+                              taskProvider.updateTaskStatus(
+                                  task, TaskStatus.finished);
+                              Navigator.pop(context);
+                            },
+                          )),
+                        ];
+                      })
+                ],
+              ),
+            ],
+          ));
     });
   }
 }

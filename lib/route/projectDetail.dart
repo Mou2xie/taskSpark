@@ -47,6 +47,82 @@ class ProjectDetail extends StatelessWidget {
     );
   }
 
+  Widget _buildTaskStatistics(BuildContext context) {
+    return Consumer<TaskProvider>(
+      builder: (context, taskProvider, child) {
+        final tasks = project.tasks;
+        final notStartedCount = tasks.where((t) => t.status == TaskStatus.notStarted).length;
+        final inProgressCount = tasks.where((t) => t.status == TaskStatus.inProgress).length;
+        final finishedCount = tasks.where((t) => t.status == TaskStatus.finished).length;
+
+        return Container(
+          margin: EdgeInsets.only(bottom: 20),
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Task Statistics',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildStatItem('Not Started', notStartedCount, Colors.grey),
+                  _buildStatItem('In Progress', inProgressCount, Colors.orange),
+                  _buildStatItem('Finished', finishedCount, Colors.green),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatItem(String label, int count, Color color) {
+    return Column(
+      children: [
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.15),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(
+              count.toString(),
+              style: TextStyle(
+                color: color,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +158,7 @@ class ProjectDetail extends StatelessWidget {
             children: [
               ProjectCard(project: project),
               SizedBox(height: 20),
+              _buildTaskStatistics(context),
               // Filter and sort options
               Card(
                 margin: EdgeInsets.zero,
@@ -263,7 +340,8 @@ class ProjectDetail extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => TaskDetail(
                               task: task,
-                              currentUser: project.members.first, // 使用项目第一个成员作为当前用户
+                              currentUser: project.members.first,
+                              project: project,
                             ),
                           ),
                         );

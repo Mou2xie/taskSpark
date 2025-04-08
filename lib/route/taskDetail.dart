@@ -3,14 +3,20 @@ import 'package:provider/provider.dart';
 import '../models/TaskModel.dart';
 import '../models/Comment.dart';
 import '../models/Member.dart';
+import '../models/ProjectModel.dart';
 import '../providers/taskProvider.dart';
 import 'package:intl/intl.dart';
 
 class TaskDetail extends StatefulWidget {
   final Task task;
   final Member currentUser;
+  final Project project;
 
-  TaskDetail({required this.task, required this.currentUser});
+  TaskDetail({
+    required this.task, 
+    required this.currentUser,
+    required this.project,
+  });
 
   @override
   _TaskDetailState createState() => _TaskDetailState();
@@ -18,6 +24,14 @@ class TaskDetail extends StatefulWidget {
 
 class _TaskDetailState extends State<TaskDetail> {
   final TextEditingController _commentController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TaskProvider>(context, listen: false).setCurrentProject(widget.project);
+    });
+  }
 
   @override
   void dispose() {
@@ -90,15 +104,8 @@ class _TaskDetailState extends State<TaskDetail> {
                   margin: EdgeInsets.all(16),
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,6 +118,25 @@ class _TaskDetailState extends State<TaskDetail> {
                         ),
                       ),
                       SizedBox(height: 16),
+                      if (widget.task.description != null && widget.task.description!.isNotEmpty) ...[
+                        Text(
+                          'Description',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          widget.task.description!,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                      ],
                       Row(
                         children: [
                           Icon(Icons.calendar_today, size: 20),
@@ -133,7 +159,7 @@ class _TaskDetailState extends State<TaskDetail> {
                       Row(
                         children: [
                           Text('Assigned to: ', style: TextStyle(fontSize: 16)),
-                          widget.task.assignTo.avatar,
+                          widget.task.assignTo.defaultAvatar,
                           SizedBox(width: 8),
                           Text(widget.task.assignTo.name, style: TextStyle(fontSize: 16)),
                         ],

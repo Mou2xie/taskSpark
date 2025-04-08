@@ -48,12 +48,14 @@ class ProjectItem extends StatelessWidget {
                         alignment: Alignment.bottomLeft,
                         // project members
                         child: Row(
-                          children: project.members
-                              .map((item) => Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 4),
-                                    child: item.avatar,
-                                  ))
-                              .toList(),
+                          children: [
+                            Wrap(
+                              spacing: 4,
+                              children: project.members
+                                  .map((member) => member.defaultAvatar)
+                                  .toList(),
+                            ),
+                          ],
                         )),
                   )
                 ],

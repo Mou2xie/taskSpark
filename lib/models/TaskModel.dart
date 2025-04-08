@@ -59,6 +59,7 @@ class Task {
   late int id;
   late TaskStatus status;
   final String taskName;
+  final String? description;
   final DateTimeRange duration;
   final Member assignTo;
   final TaskPriority priority;
@@ -78,6 +79,7 @@ class Task {
 
   Task({
     required this.taskName,
+    this.description,
     required this.duration,
     required this.assignTo,
     required this.priority,

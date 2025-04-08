@@ -36,12 +36,13 @@ class ProjectCard extends StatelessWidget {
           Text(project.projectDescription ?? '',
               style: TextStyle(fontSize: 16)),
           SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: project.members.map((member) => Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4),
-              child: member.avatar,
-            )).toList(),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
+            children: project.members
+                .map((member) => member.defaultAvatar)
+                .toList(),
           )
         ],
       ),

@@ -10,11 +10,18 @@ class TaskProvider extends ChangeNotifier {
   TaskStatus? _filterStatus;
   TaskPriority? _filterPriority;
   Member? _filterMember;
+  Project? _currentProject;
 
   TaskSortMethod get currentSortMethod => _currentSortMethod;
   TaskStatus? get filterStatus => _filterStatus;
   TaskPriority? get filterPriority => _filterPriority;
   Member? get filterMember => _filterMember;
+  List<Task> get tasks => _currentProject?.tasks ?? [];
+
+  void setCurrentProject(Project project) {
+    _currentProject = project;
+    notifyListeners();
+  }
 
   void updateTaskStatus(Task task, TaskStatus status) {
     task.status = status;
