@@ -4,6 +4,7 @@ import 'package:project_manager/providers/taskProvider.dart';
 import 'package:provider/provider.dart';
 import 'createProject.dart';
 import 'package:project_manager/providers/projectsListProvider.dart';
+import 'settings.dart';
 
 void main(List<String> args) {
   runApp(ProjectList());
@@ -22,6 +23,14 @@ class ProjectList extends StatelessWidget {
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             actions: [
+              IconButton(
+                icon: Icon(Icons.settings, size: 30),
+                onPressed: () {
+                  // navigate to settings page
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SettingsPage()));
+                },
+              ),
               IconButton(
                 icon: Icon(Icons.add, size: 40),
                 onPressed: () {
