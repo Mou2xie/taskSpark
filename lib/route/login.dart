@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project_manager/route/projectList.dart';
+import 'package:project_manager/services/token_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,13 +16,61 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      // Navigate to project list page after validation
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => ProjectList()),
-      );
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final response = await http.post(
+          Uri.parse('http://10.144.107.62:3000/login'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({
+            'email': _emailController.text,
+            'password': _passwordController.text,
+          }),
+        );
+
+        final data = json.decode(response.body);
+
+        if (response.statusCode == 200 && data['token'] != null) {
+          // Login successful, save token and navigate
+          await TokenService.saveToken(data['token']);
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => ProjectList()),
+            );
+          }
+        } else {
+          // Login failed, show error message
+          if (mounted) {
+            Fluttertoast.showToast(
+              msg: data['message'] ?? 'Login failed',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          Fluttertoast.showToast(
+            msg: 'Network error',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 
@@ -74,8 +126,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: _handleLogin,
-                  child: Text('Login'),
+                  onPressed: _isLoading ? null : _handleLogin,
+                  child: _isLoading
+                      ? CircularProgressIndicator()
+                      : Text('Login'),
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 50),
                   ),

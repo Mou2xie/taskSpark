@@ -3,8 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:project_manager/route/welcome.dart';
 import 'providers/projectsListProvider.dart';
 import './providers/taskProvider.dart';
+import 'services/token_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await TokenService.init();
+  
   runApp(
     // wrap the app with MultiProvider so I'm able to access states everywhere within app
     MultiProvider(

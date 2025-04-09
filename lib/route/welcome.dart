@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_manager/route/login.dart';
+import 'package:project_manager/route/projectList.dart';
+import 'package:project_manager/services/token_service.dart';
 
 void main() {
   runApp(WelcomePage());
@@ -10,16 +12,25 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Show welcome page for 3 seconds and redirect to login page
+    // Show welcome page for 3 seconds and redirect based on token
     return FutureBuilder(
         future: Future.delayed(Duration(seconds: 3)),
         builder: (context, promise) {
           if (promise.connectionState == ConnectionState.done) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              // Navigate to login page
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
+              // Check if token exists
+              final token = TokenService.getToken();
+              if (token != null) {
+                // Token exists, navigate to project list
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => ProjectList()),
+                );
+              } else {
+                // No token, navigate to login
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              }
             });
           }
           
