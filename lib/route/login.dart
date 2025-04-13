@@ -4,6 +4,7 @@ import 'package:project_manager/services/token_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project_manager/route/register.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  final url = 'http://192.168.1.73:3000';
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
@@ -26,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://10.144.107.62:3000/login'),
+          Uri.parse('${url}/login'),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -133,6 +135,14 @@ class _LoginPageState extends State<LoginPage> {
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 50),
                   ),
+                ),
+                SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                  ),
+                  child: Text('Create New Account'),
                 ),
               ],
             ),
