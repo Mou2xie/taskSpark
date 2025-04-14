@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/TaskModel.dart';
 
 // shown in the project detail page
+// take a task instance as props
 class TaskItem extends StatelessWidget {
   late Task task;
 

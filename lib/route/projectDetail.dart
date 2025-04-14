@@ -38,7 +38,7 @@ class ProjectDetail extends StatelessWidget {
                 Provider.of<ProjectsListProvider>(context, listen: false)
                     .removeProject(project);
                 Navigator.pop(context);
-                Navigator.of(context).pop(); // 关闭对话框
+                Navigator.of(context).pop(); // close the project detail page
               },
             ),
           ],
@@ -329,7 +329,7 @@ class ProjectDetail extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              // 任务列表
+              // Task list
               ...taskProvider.getFilteredAndSortedTasks(project.tasks).map((task) {
                 return Column(
                   children: [

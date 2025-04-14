@@ -13,6 +13,7 @@ class ProjectsListProvider extends ChangeNotifier {
     _loadProjects();
   }
 
+// Load projects from the database
   Future<void> _loadProjects() async {
     final projects = await _databaseService.getProjects();
     _projectsList.clear();
@@ -20,11 +21,13 @@ class ProjectsListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+// Add a new project to the database
   Future<void> addProject(Project project) async {
     await _databaseService.insertProject(project);
     await _loadProjects();
   }
 
+// Update an existing project in the database
   Future<void> removeProject(Project project) async {
     await _databaseService.deleteProject(project.id);
     await _loadProjects();

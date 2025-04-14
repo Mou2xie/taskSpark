@@ -53,13 +53,11 @@ class TaskFormState extends State<TaskForm> {
   // access taskName with taskNameController.text
   final taskNameController = TextEditingController();
   final descriptionController = TextEditingController();
-
-  // 存储选中的成员
   late Member assignTo;
 
   TaskFormState(Project project) {
     this.project = project;
-    // 默认选择第一个成员
+    // default assignTo to the first member in the project
     assignTo = project.members.first;
   }
 
@@ -174,7 +172,7 @@ class TaskFormState extends State<TaskForm> {
 
             SizedBox(height: 10),
 
-            // 使用项目成员列表渲染单选按钮
+            // radio list for project members
             Column(
               children: project.members.map((member) {
                 return RadioListTile<Member>(

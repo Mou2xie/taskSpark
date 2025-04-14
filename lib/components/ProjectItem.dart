@@ -13,6 +13,7 @@ class ProjectItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+        // navigate to the project detail page when tapped
         onTap: () {
           Navigator.push(
               context,

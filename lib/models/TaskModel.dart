@@ -56,7 +56,7 @@ extension TaskPriorityExtension on TaskPriority {
 class Task {
   static int _id = 0;
 
-  late int id;
+  int? id;
   String taskName;
   String? description;
   DateTimeRange duration;
@@ -68,6 +68,7 @@ class Task {
   final List<Comment> comments = [];
 
   Task({
+    this.id,
     required this.taskName,
     this.description,
     required this.duration,

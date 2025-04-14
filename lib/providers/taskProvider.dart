@@ -27,31 +27,36 @@ class TaskProvider extends ChangeNotifier {
   }
 
   Future<void> updateTaskStatus(Task task, TaskStatus status) async {
+    if (task.id == null) return;
     task.status = status;
-    await _databaseService.updateTaskStatus(task.id, status);
+    await _databaseService.updateTaskStatus(task.id!, status);
     notifyListeners();
   }
 
   Future<void> addtaskToProject(Task task, Project project) async {
-    await _databaseService.insertTask(task, project.id);
+    final taskId = await _databaseService.insertTask(task, project.id);
+    task.id = taskId;
     project.addTask(task);
     notifyListeners();
   }
 
   Future<void> pinTask(Task task) async {
+    if (task.id == null) return;
     task.setPinned(true);
-    await _databaseService.updateTaskPin(task.id, true);
+    await _databaseService.updateTaskPin(task.id!, true);
     notifyListeners();
   }
 
   Future<void> unpinTask(Task task) async {
+    if (task.id == null) return;
     task.setPinned(false);
-    await _databaseService.updateTaskPin(task.id, false);
+    await _databaseService.updateTaskPin(task.id!, false);
     notifyListeners();
   }
 
   Future<void> addComment(Task task, Comment comment) async {
-    await _databaseService.insertComment(comment, task.id);
+    if (task.id == null) return;
+    await _databaseService.insertComment(comment, task.id!);
     task.addComment(comment);
     notifyListeners();
   }
@@ -84,7 +89,7 @@ class TaskProvider extends ChangeNotifier {
   }
 
   List<Task> getFilteredAndSortedTasks(List<Task> tasks) {
-    // 应用过滤器
+    // filter tasks based on the selected filters
     if (_filterStatus != null) {
       tasks = tasks.where((task) => task.status == _filterStatus).toList();
     }
@@ -95,7 +100,7 @@ class TaskProvider extends ChangeNotifier {
       tasks = tasks.where((task) => task.assignTo.name == _filterMember!.name).toList();
     }
 
-    // 应用排序
+    // sort tasks based on the selected sort method
     switch (_currentSortMethod) {
       case TaskSortMethod.by_time:
         tasks.sort((a, b) => b.createTime.compareTo(a.createTime));

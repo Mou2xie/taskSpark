@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 class Member {
+  final int? id;
   final String name;
   final CircleAvatar? avatar;
 
   Member({
+    this.id,
     required this.name,
     this.avatar,
   });
 
-  // 如果没有设置头像，则使用名字的第一个字母作为默认头像
+  // if avatar is null, return a default avatar with the first letter of the name
   Widget get defaultAvatar {
     return avatar ?? CircleAvatar(
       backgroundColor: Colors.blue,

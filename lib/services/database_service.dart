@@ -30,7 +30,7 @@ class DatabaseService {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    // 创建项目表
+    // create projects table
     await db.execute('''
       CREATE TABLE projects(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,7 +41,7 @@ class DatabaseService {
       )
     ''');
 
-    // 创建成员表
+    // create members table
     await db.execute('''
       CREATE TABLE members(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,7 +52,7 @@ class DatabaseService {
       )
     ''');
 
-    // 创建任务表
+    // create tasks table
     await db.execute('''
       CREATE TABLE tasks(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,7 +71,7 @@ class DatabaseService {
       )
     ''');
 
-    // 创建评论表
+    // create comments table
     await db.execute('''
       CREATE TABLE comments(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,12 +93,12 @@ class DatabaseService {
       'projectDescription': project.projectDescription,
     });
 
-    // 插入项目成员
+    // insert members
     for (var member in project.members) {
       await db.insert('members', {
         'projectId': projectId,
         'name': member.name,
-        'avatarPath': null, // 暂时不处理头像
+        'avatarPath': null, // Assuming avatarPath is not used for now
       });
     }
 
@@ -111,7 +111,7 @@ class DatabaseService {
     
     List<Project> projects = [];
     for (var projectMap in projectMaps) {
-      // 获取项目成员
+      // getting members for each project
       final List<Map<String, dynamic>> memberMaps = await db.query(
         'members',
         where: 'projectId = ?',
@@ -120,6 +120,7 @@ class DatabaseService {
 
       List<Member> members = memberMaps.map((memberMap) {
         return Member(
+          id: memberMap['id'],
           name: memberMap['name'],
           avatar: memberMap['avatarPath'] != null
               ? CircleAvatar(backgroundImage: AssetImage(memberMap['avatarPath']))
@@ -127,7 +128,7 @@ class DatabaseService {
         );
       }).toList();
 
-      // 创建项目对象
+      // create project object
       Project project = Project(
         projectName: projectMap['projectName'],
         durationRange: DateTimeRange(
@@ -136,18 +137,18 @@ class DatabaseService {
         ),
         projectDescription: projectMap['projectDescription'],
         members: members,
-        dbId: projectMap['id'],  // 设置数据库ID
+        dbId: projectMap['id'],  // setting the database ID
       );
 
-      // 获取项目任务
+      // getting tasks for each project
       final List<Map<String, dynamic>> taskMaps = await db.query(
         'tasks',
         where: 'projectId = ?',
-        whereArgs: [projectMap['id']],  // 使用数据库ID查询任务
+        whereArgs: [projectMap['id']],  // search tasks by project ID
       );
 
       for (var taskMap in taskMaps) {
-        // 获取任务评论
+        // getting comments for each task
         final List<Map<String, dynamic>> commentMaps = await db.query(
           'comments',
           where: 'taskId = ?',
@@ -160,7 +161,7 @@ class DatabaseService {
           );
         }).toList();
 
-        // 创建任务对象
+        // create task object
         Task task = Task(
           taskName: taskMap['taskName'],
           description: taskMap['description'],
@@ -169,18 +170,19 @@ class DatabaseService {
             end: DateTime.parse(taskMap['endDate']),
           ),
           assignTo: members.firstWhere(
-            (m) => m.name == taskMap['assignToId'].toString(),
+            (m) => m.id == taskMap['assignToId'],  // use member ID to find the member
+            orElse: () => Member(name: '未分配'),
           ),
           priority: TaskPriority.values[taskMap['priority']],
           status: TaskStatus.values[taskMap['status']],
         );
-        task.id = taskMap['id'];  // 设置任务的数据库ID
+        task.id = taskMap['id']; 
 
-        // 添加评论到任务
+        // add comments to task
         for (var commentMap in commentMaps) {
           Comment comment = Comment(
             content: commentMap['content'],
-            createTime: DateTime.parse(commentMap['createTime']),  // 使用数据库中保存的时间
+            createTime: DateTime.parse(commentMap['createTime']), 
           );
           task.addComment(comment);
         }
@@ -206,13 +208,26 @@ class DatabaseService {
   // Task CRUD operations
   Future<int> insertTask(Task task, int projectId) async {
     final db = await database;
+    // 先获取成员的 ID
+    final List<Map<String, dynamic>> memberResult = await db.query(
+      'members',
+      where: 'name = ? AND projectId = ?',
+      whereArgs: [task.assignTo.name, projectId],
+    );
+    
+    if (memberResult.isEmpty) {
+      throw Exception('找不到指定的成员');
+    }
+    
+    final int memberId = memberResult.first['id'] as int;
+    
     return await db.insert('tasks', {
       'projectId': projectId,
       'taskName': task.taskName,
       'description': task.description,
       'startDate': task.duration.start.toIso8601String(),
       'endDate': task.duration.end.toIso8601String(),
-      'assignToId': task.assignTo.name,
+      'assignToId': memberId,  // 使用成员 ID 而不是名字
       'priority': task.priority.index,
       'status': task.status.index,
       'isPinned': task.isPinned ? 1 : 0,

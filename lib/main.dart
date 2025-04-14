@@ -8,10 +8,10 @@ import 'services/database_service.dart';
 import 'services/theme_service.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // 确保Flutter引擎初始化
-  await TokenService.init();
-  await DatabaseService().database; // 初始化数据库
-  await ThemeService.init(); // 初始化主题服务
+  WidgetsFlutterBinding.ensureInitialized(); 
+  await TokenService.init(); // initialize the token service
+  await DatabaseService().database; // initialize the database
+  await ThemeService.init(); // initialize the theme service
   
   runApp(
     // wrap the app with MultiProvider so I'm able to access states everywhere within app
