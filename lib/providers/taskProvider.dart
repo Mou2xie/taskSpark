@@ -4,8 +4,11 @@ import '../models/ProjectModel.dart';
 import '../models/TaskSortMethod.dart';
 import '../models/Member.dart';
 import '../models/TaskPriority.dart';
+import '../services/database_service.dart';
+import '../models/Comment.dart';
 
 class TaskProvider extends ChangeNotifier {
+  final DatabaseService _databaseService = DatabaseService();
   TaskSortMethod _currentSortMethod = TaskSortMethod.by_time;
   TaskStatus? _filterStatus;
   TaskPriority? _filterPriority;
@@ -23,23 +26,33 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateTaskStatus(Task task, TaskStatus status) {
+  Future<void> updateTaskStatus(Task task, TaskStatus status) async {
     task.status = status;
+    await _databaseService.updateTaskStatus(task.id, status);
     notifyListeners();
   }
 
-  void addtaskToProject(Task task, Project project) {
+  Future<void> addtaskToProject(Task task, Project project) async {
+    await _databaseService.insertTask(task, project.id);
     project.addTask(task);
     notifyListeners();
   }
 
-  void pinTask(Task task) {
+  Future<void> pinTask(Task task) async {
     task.setPinned(true);
+    await _databaseService.updateTaskPin(task.id, true);
     notifyListeners();
   }
 
-  void unpinTask(Task task) {
+  Future<void> unpinTask(Task task) async {
     task.setPinned(false);
+    await _databaseService.updateTaskPin(task.id, false);
+    notifyListeners();
+  }
+
+  Future<void> addComment(Task task, Comment comment) async {
+    await _databaseService.insertComment(comment, task.id);
+    task.addComment(comment);
     notifyListeners();
   }
 
@@ -70,58 +83,28 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Get status weight for sorting
-  int _getStatusWeight(TaskStatus status) {
-    switch (status) {
-      case TaskStatus.notStarted:
-        return 0;
-      case TaskStatus.inProgress:
-        return 1;
-      case TaskStatus.finished:
-        return 2;
-    }
-  }
-
-  // Get priority weight for sorting (T0 highest, T2 lowest)
-  int _getPriorityWeight(TaskPriority priority) {
-    switch (priority) {
-      case TaskPriority.high:
-        return 0;
-      case TaskPriority.medium:
-        return 1;
-      case TaskPriority.low:
-        return 2;
-    }
-    return 0;
-  }
-
   List<Task> getFilteredAndSortedTasks(List<Task> tasks) {
-    // Apply filters
-    var filteredTasks = tasks.where((task) {
-      bool matchesStatus = _filterStatus == null || task.status == _filterStatus;
-      bool matchesPriority = _filterPriority == null || task.priority == _filterPriority;
-      bool matchesMember = _filterMember == null || task.assignTo == _filterMember;
-      return matchesStatus && matchesPriority && matchesMember;
-    }).toList();
-    
-    // Sort tasks
-    filteredTasks.sort((a, b) {
-      if (a.isPinned && !b.isPinned) return -1;
-      if (!a.isPinned && b.isPinned) return 1;
-      
-      // First sort by status
-      int statusCompare = _getStatusWeight(a.status).compareTo(_getStatusWeight(b.status));
-      if (statusCompare != 0) return statusCompare;
+    // 应用过滤器
+    if (_filterStatus != null) {
+      tasks = tasks.where((task) => task.status == _filterStatus).toList();
+    }
+    if (_filterPriority != null) {
+      tasks = tasks.where((task) => task.priority == _filterPriority).toList();
+    }
+    if (_filterMember != null) {
+      tasks = tasks.where((task) => task.assignTo.name == _filterMember!.name).toList();
+    }
 
-      // Then sort by selected method
-      switch (_currentSortMethod) {
-        case TaskSortMethod.by_time:
-          return b.createTime.compareTo(a.createTime);
-        case TaskSortMethod.by_priority:
-          return _getPriorityWeight(a.priority).compareTo(_getPriorityWeight(b.priority));
-      }
-    });
-    
-    return filteredTasks;
+    // 应用排序
+    switch (_currentSortMethod) {
+      case TaskSortMethod.by_time:
+        tasks.sort((a, b) => b.createTime.compareTo(a.createTime));
+        break;
+      case TaskSortMethod.by_priority:
+        tasks.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+        break;
+    }
+
+    return tasks;
   }
 }

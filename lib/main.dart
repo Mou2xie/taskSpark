@@ -4,10 +4,14 @@ import 'package:project_manager/route/welcome.dart';
 import 'providers/projectsListProvider.dart';
 import './providers/taskProvider.dart';
 import 'services/token_service.dart';
+import 'services/database_service.dart';
+import 'services/theme_service.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); // 确保Flutter引擎初始化
   await TokenService.init();
+  await DatabaseService().database; // 初始化数据库
+  await ThemeService.init(); // 初始化主题服务
   
   runApp(
     // wrap the app with MultiProvider so I'm able to access states everywhere within app
@@ -19,10 +23,25 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => TaskProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
       ],
       child: const MyApp(),
     ),
   );
+}
+
+class ThemeProvider extends ChangeNotifier {
+  bool _isDarkMode = ThemeService.isDarkMode;
+
+  bool get isDarkMode => _isDarkMode;
+
+  Future<void> toggleTheme() async {
+    _isDarkMode = !_isDarkMode;
+    await ThemeService.setDarkMode(_isDarkMode);
+    notifyListeners();
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -30,9 +49,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Task Spark',
-        // the first page is welcome page
-        home: WelcomePage());
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'Task Spark',
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: WelcomePage(),
+        );
+      },
+    );
   }
 }

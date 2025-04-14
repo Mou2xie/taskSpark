@@ -113,8 +113,6 @@ class _CreateProjectState extends State<CreateProject> {
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_today, size: 28),
-                    SizedBox(width: 10),
                     Text(
                       "Duration:",
                       style: TextStyle(fontSize: 20, color: Colors.grey),

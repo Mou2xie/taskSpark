@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/ProjectModel.dart';
 
 // The top component in the project detail page
+// take a project as props
 class ProjectCard extends StatelessWidget {
   final Project project;
 

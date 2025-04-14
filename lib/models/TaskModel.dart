@@ -57,15 +57,27 @@ class Task {
   static int _id = 0;
 
   late int id;
-  late TaskStatus status;
-  final String taskName;
-  final String? description;
-  final DateTimeRange duration;
-  final Member assignTo;
-  final TaskPriority priority;
-  bool _isPinned = false;
+  String taskName;
+  String? description;
+  DateTimeRange duration;
+  Member assignTo;
+  TaskPriority priority;
+  TaskStatus status;
+  bool _isPinned;
   final DateTime createTime;
   final List<Comment> comments = [];
+
+  Task({
+    required this.taskName,
+    this.description,
+    required this.duration,
+    required this.assignTo,
+    required this.priority,
+    this.status = TaskStatus.notStarted,
+    bool isPinned = false,
+    DateTime? createTime,
+  }) : _isPinned = isPinned,
+       createTime = createTime ?? DateTime.now();
 
   bool get isPinned => _isPinned;
 
@@ -75,17 +87,6 @@ class Task {
 
   void addComment(Comment comment) {
     comments.add(comment);
-  }
-
-  Task({
-    required this.taskName,
-    this.description,
-    required this.duration,
-    required this.assignTo,
-    required this.priority,
-    required this.status,
-  }) : createTime = DateTime.now() {
-    id = ++Task._id;
   }
 
   void updateStatus(TaskStatus newStatus) {

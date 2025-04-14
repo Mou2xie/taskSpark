@@ -200,12 +200,12 @@ class _TaskDetailState extends State<TaskDetail> {
                             icon: Icon(Icons.send),
                             onPressed: () {
                               if (_commentController.text.trim().isNotEmpty) {
-                                setState(() {
-                                  widget.task.addComment(Comment(
-                                    content: _commentController.text.trim(),
-                                  ));
-                                  _commentController.clear();
-                                });
+                                final comment = Comment(
+                                  content: _commentController.text.trim(),
+                                );
+                                Provider.of<TaskProvider>(context, listen: false)
+                                    .addComment(widget.task, comment);
+                                _commentController.clear();
                               }
                             },
                           ),

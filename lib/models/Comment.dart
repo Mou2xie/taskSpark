@@ -4,5 +4,6 @@ class Comment {
 
   Comment({
     required this.content,
-  }) : createTime = DateTime.now();
+    DateTime? createTime,
+  }) : createTime = createTime ?? DateTime.now();
 } 

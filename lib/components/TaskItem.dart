@@ -40,12 +40,27 @@ class TaskItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // task name with pin icon
+                    // task name with pin icon and status
                     Row(
                       children: [
                         Text(task.taskName,
                             style:
                                 TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 12),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(task.status).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            task.status.string,
+                            style: TextStyle(
+                              color: _getStatusColor(task.status),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                         if (task.isPinned) ...[
                           SizedBox(width: 8),
                           Icon(Icons.push_pin, 
@@ -65,9 +80,6 @@ class TaskItem extends StatelessWidget {
                     Row(
                       children: [
                         task.assignTo.defaultAvatar,
-                        SizedBox(width: 8),
-                        Text(task.assignTo.name,
-                            style: TextStyle(fontSize: 16)),
                       ],
                     ),
                   ],
@@ -75,6 +87,7 @@ class TaskItem extends StatelessWidget {
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   // task priority
                   Text(task.priority.string,
@@ -82,7 +95,9 @@ class TaskItem extends StatelessWidget {
                           fontSize: 22,
                           color: task.priority.color,
                           fontWeight: FontWeight.bold)),
-                  PopupMenuButton(
+                  Container(
+                    alignment: Alignment.centerRight,
+                    child: PopupMenuButton(
                       icon: Icon(
                         Icons.more_horiz,
                         size: 35,
@@ -130,6 +145,7 @@ class TaskItem extends StatelessWidget {
                           )),
                         ];
                       })
+                  ),
                 ],
               ),
             ],

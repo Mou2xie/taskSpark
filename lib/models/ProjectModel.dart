@@ -21,8 +21,9 @@ class Project {
     required this.durationRange,
     required this.members,
     this.projectDescription,
+    int? dbId,
   }) {
-    id = ++Project._id;
+    id = dbId ?? ++Project._id;
   }
 
   void addTask(Task task) {

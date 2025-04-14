@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:project_manager/services/token_service.dart';
 import 'package:project_manager/route/login.dart';
+import 'package:provider/provider.dart';
+import '../main.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -28,6 +30,24 @@ class SettingsPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Theme Switch
+            Card(
+              child: ListTile(
+                title: Text('Dark Mode'),
+                trailing: Consumer<ThemeProvider>(
+                  builder: (context, themeProvider, child) {
+                    return Switch(
+                      value: themeProvider.isDarkMode,
+                      onChanged: (bool value) {
+                        themeProvider.toggleTheme();
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            // Logout Button
             ElevatedButton(
               onPressed: () => _handleLogout(context),
               style: ElevatedButton.styleFrom(
