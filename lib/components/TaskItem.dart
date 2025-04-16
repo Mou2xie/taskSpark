@@ -32,7 +32,7 @@ class TaskItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           padding: EdgeInsets.all(12),
-          height: 130,
+          height: 180,
           width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,35 +41,42 @@ class TaskItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // task name with pin icon and status
+                    // task name and pin icon
                     Row(
                       children: [
-                        Text(task.taskName,
-                            style:
-                                TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                        SizedBox(width: 12),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: _getStatusColor(task.status).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                        Expanded(
                           child: Text(
-                            task.status.string,
-                            style: TextStyle(
-                              color: _getStatusColor(task.status),
-                              fontWeight: FontWeight.w500,
-                            ),
+                            task.taskName,
+                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (task.isPinned) ...[
                           SizedBox(width: 8),
-                          Icon(Icons.push_pin, 
-                              color: Colors.blue, 
-                              size: 20,
-                              textDirection: TextDirection.ltr),
+                          Icon(
+                            Icons.push_pin,
+                            color: Colors.blue,
+                            size: 20,
+                            textDirection: TextDirection.ltr
+                          ),
                         ],
                       ],
+                    ),
+                    SizedBox(height: 8),
+                    // task status
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(task.status).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        task.status.string,
+                        style: TextStyle(
+                          color: _getStatusColor(task.status),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                     SizedBox(height: 8),
                     // task duration

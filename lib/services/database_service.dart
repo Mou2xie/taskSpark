@@ -171,7 +171,7 @@ class DatabaseService {
           ),
           assignTo: members.firstWhere(
             (m) => m.id == taskMap['assignToId'],  // use member ID to find the member
-            orElse: () => Member(name: '未分配'),
+            orElse: () => Member(name: 'unknown'),  // default member if not found
           ),
           priority: TaskPriority.values[taskMap['priority']],
           status: TaskStatus.values[taskMap['status']],
@@ -208,7 +208,7 @@ class DatabaseService {
   // Task CRUD operations
   Future<int> insertTask(Task task, int projectId) async {
     final db = await database;
-    // 先获取成员的 ID
+    // getting the member ID from the database
     final List<Map<String, dynamic>> memberResult = await db.query(
       'members',
       where: 'name = ? AND projectId = ?',
@@ -216,7 +216,7 @@ class DatabaseService {
     );
     
     if (memberResult.isEmpty) {
-      throw Exception('找不到指定的成员');
+      throw Exception('cannot find member with name ${task.assignTo.name} in project $projectId');
     }
     
     final int memberId = memberResult.first['id'] as int;
@@ -227,7 +227,7 @@ class DatabaseService {
       'description': task.description,
       'startDate': task.duration.start.toIso8601String(),
       'endDate': task.duration.end.toIso8601String(),
-      'assignToId': memberId,  // 使用成员 ID 而不是名字
+      'assignToId': memberId,  // use the member ID
       'priority': task.priority.index,
       'status': task.status.index,
       'isPinned': task.isPinned ? 1 : 0,
@@ -250,6 +250,15 @@ class DatabaseService {
     await db.update(
       'tasks',
       {'isPinned': isPinned ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [taskId],
+    );
+  }
+
+  Future<void> deleteTask(int taskId) async {
+    final db = await database;
+    await db.delete(
+      'tasks',
       where: 'id = ?',
       whereArgs: [taskId],
     );

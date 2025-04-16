@@ -14,7 +14,7 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Show welcome page for 3 seconds and redirect based on token
     return FutureBuilder(
-        future: Future.delayed(Duration(seconds: 3)),
+        future: Future.delayed(Duration(seconds: 5)),
         builder: (context, promise) {
           if (promise.connectionState == ConnectionState.done) {
             WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -61,6 +61,13 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> removeTask(Task task) async {
+    if (task.id == null) return;
+    await _databaseService.deleteTask(task.id!);
+    _currentProject?.tasks.remove(task);
+    notifyListeners();
+  }
+
   void setSortMethod(TaskSortMethod method) {
     _currentSortMethod = method;
     notifyListeners();

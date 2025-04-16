@@ -91,6 +91,44 @@ class _TaskDetailState extends State<TaskDetail> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Task Detail'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete_outline),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Delete Task'),
+                    content: Text('Are you sure you want to delete this task? This action cannot be undone.'),
+                    actions: [
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onPressed: () {
+                          Provider.of<TaskProvider>(context, listen: false)
+                              .removeTask(widget.task)
+                              .then((_) {
+                            Navigator.of(context).pop(); // Close dialog
+                            Navigator.of(context).pop(); // Return to project detail page
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Consumer<TaskProvider>(
         builder: (context, taskProvider, child) {
